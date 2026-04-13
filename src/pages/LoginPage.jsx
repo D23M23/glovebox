@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { Package } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { api } from '../lib/api';
 
@@ -43,9 +42,7 @@ export default function LoginPage() {
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
-          <div className="w-16 h-16 rounded-2xl bg-blue-600 flex items-center justify-center mb-3 shadow-lg">
-            <Package size={32} className="text-white" />
-          </div>
+          <img src="/logo.svg" alt="GloveBox" className="w-20 h-20 mb-3 drop-shadow-lg" />
           <h1 className="text-2xl font-bold text-gray-900">GloveBox</h1>
           <p className="text-sm text-gray-500 mt-1">
             {needsSetup ? 'Create your admin account to get started' : 'Sign in to your account'}
