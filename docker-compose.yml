@@ -3,9 +3,10 @@ services:
     build:
       context: .
       args:
-        VITE_APP_TITLE: ${VITE_APP_TITLE}
+        # Baked into the frontend bundle at build time
+        VITE_APP_TITLE: ${VITE_APP_TITLE:-GloveBox}
     ports:
-      - "${APP_PORT:-3000}:80"
+      - "${APP_PORT:-7070}:80"
     depends_on:
       - api
     restart: unless-stopped
@@ -14,6 +15,7 @@ services:
     build:
       context: ./server
     environment:
+      # Set JWT_SECRET as a Secret variable in Dockhand (never written to disk)
       JWT_SECRET: ${JWT_SECRET}
       NODE_ENV: production
       DATA_DIR: /app/data
