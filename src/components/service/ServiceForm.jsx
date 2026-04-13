@@ -57,6 +57,10 @@ export default function ServiceForm({ defaultValues, onSubmit, onCancel, submitL
         </Field>
       </div>
 
+      <Field label="Location">
+        <input {...register('location')} placeholder="Bay 3, East Lot, etc." className={inp()} />
+      </Field>
+
       <Field label="Notes">
         <textarea {...register('notes')} rows={2} placeholder="Any additional notes..." className={inp() + ' resize-none'} />
       </Field>

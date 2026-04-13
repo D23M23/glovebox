@@ -1,27 +1,25 @@
 import { useRef, useState } from 'react';
 import { Camera, ImagePlus, X, Edit2, Check } from 'lucide-react';
-import { compressAndEncode } from '../../lib/imageUtils';
+import { compressAndUpload } from '../../lib/imageUtils';
 
 export default function PhotoCapture({ photos = [], onChange }) {
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
-  const [captionEdit, setCaptionEdit] = useState(null); // { id, value }
+  const [captionEdit, setCaptionEdit] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   async function handleFiles(files) {
     setLoading(true);
+    setError('');
     const newPhotos = [];
     for (const file of files) {
       try {
-        const dataUrl = await compressAndEncode(file);
-        newPhotos.push({
-          id: crypto.randomUUID(),
-          dataUrl,
-          caption: '',
-          takenAt: new Date().toISOString(),
-        });
+        const result = await compressAndUpload(file);
+        newPhotos.push({ ...result, caption: '' });
       } catch (err) {
-        console.error('Photo compression failed', err);
+        setError('Failed to upload one or more photos');
+        console.error(err);
       }
     }
     onChange([...photos, ...newPhotos]);
@@ -39,49 +37,41 @@ export default function PhotoCapture({ photos = [], onChange }) {
 
   return (
     <div>
-      <div className="flex gap-2 mb-3">
+      <div className="flex gap-2 mb-3 flex-wrap">
         <button
           type="button"
           onClick={() => cameraInputRef.current?.click()}
-          className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700"
+          disabled={loading}
+          className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 disabled:opacity-60"
         >
           <Camera size={16} /> Take Photo
         </button>
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="flex items-center gap-2 px-3 py-2 border border-gray-300 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-50"
+          disabled={loading}
+          className="flex items-center gap-2 px-3 py-2 border border-gray-300 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-50 disabled:opacity-60"
         >
           <ImagePlus size={16} /> Upload
         </button>
-        {loading && <span className="self-center text-sm text-gray-500">Processing...</span>}
+        {loading && <span className="self-center text-sm text-gray-500">Uploading...</span>}
+        {error && <span className="self-center text-sm text-red-500">{error}</span>}
       </div>
 
-      {/* Hidden inputs */}
-      <input
-        ref={cameraInputRef}
-        type="file"
-        accept="image/*"
-        capture="environment"
-        className="hidden"
-        onChange={(e) => e.target.files?.length && handleFiles(Array.from(e.target.files))}
-      />
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        multiple
-        className="hidden"
-        onChange={(e) => e.target.files?.length && handleFiles(Array.from(e.target.files))}
-      />
+      <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="hidden"
+        onChange={(e) => e.target.files?.length && handleFiles(Array.from(e.target.files))} />
+      <input ref={fileInputRef} type="file" accept="image/*" multiple className="hidden"
+        onChange={(e) => e.target.files?.length && handleFiles(Array.from(e.target.files))} />
 
       {photos.length > 0 && (
         <div className="grid grid-cols-2 gap-2">
           {photos.map((photo) => (
             <div key={photo.id} className="relative rounded-xl overflow-hidden bg-gray-100 aspect-video">
-              <img src={photo.dataUrl} alt={photo.caption || 'Vehicle photo'} className="w-full h-full object-cover" />
-
-              {/* Remove button */}
+              <img
+                src={`/uploads/${photo.filename}`}
+                alt={photo.caption || 'Vehicle photo'}
+                className="w-full h-full object-cover"
+              />
               <button
                 type="button"
                 onClick={() => removePhoto(photo.id)}
@@ -89,8 +79,6 @@ export default function PhotoCapture({ photos = [], onChange }) {
               >
                 <X size={12} />
               </button>
-
-              {/* Caption */}
               <div className="absolute bottom-0 left-0 right-0 bg-black/50 px-2 py-1">
                 {captionEdit?.id === photo.id ? (
                   <div className="flex gap-1">
@@ -115,9 +103,7 @@ export default function PhotoCapture({ photos = [], onChange }) {
                     onClick={() => setCaptionEdit({ id: photo.id, value: photo.caption || '' })}
                     className="flex items-center gap-1 w-full text-left"
                   >
-                    <span className="text-xs text-white/90 flex-1 truncate">
-                      {photo.caption || 'Add caption...'}
-                    </span>
+                    <span className="text-xs text-white/90 flex-1 truncate">{photo.caption || 'Add caption...'}</span>
                     <Edit2 size={10} className="text-white/60 shrink-0" />
                   </button>
                 )}

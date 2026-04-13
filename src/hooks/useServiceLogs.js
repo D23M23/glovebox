@@ -1,43 +1,38 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getServiceLogs, saveServiceLog, deleteServiceLog } from '../lib/storage';
+import { api } from '../lib/api';
 
 export function useServiceLogs(vehicleId) {
   const [logs, setLogs] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const reload = useCallback(() => {
-    setLogs(getServiceLogs(vehicleId));
+  const reload = useCallback(async () => {
+    if (!vehicleId) { setLoading(false); return; }
+    setLoading(true);
+    try {
+      const data = await api.get(`/vehicles/${vehicleId}/service-logs`);
+      setLogs(data ?? []);
+    } finally {
+      setLoading(false);
+    }
   }, [vehicleId]);
 
-  useEffect(() => {
-    reload();
-  }, [reload]);
+  useEffect(() => { reload(); }, [reload]);
 
-  const addLog = useCallback((data) => {
-    const entry = {
-      ...data,
-      vehicleId,
-      id: crypto.randomUUID(),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    saveServiceLog(entry);
-    reload();
+  const addLog = useCallback(async (data) => {
+    const entry = await api.post(`/vehicles/${vehicleId}/service-logs`, data);
+    await reload();
     return entry;
   }, [vehicleId, reload]);
 
-  const updateLog = useCallback((id, data) => {
-    const all = getServiceLogs();
-    const existing = all.find((e) => e.id === id);
-    if (!existing) return;
-    const updated = { ...existing, ...data, id, updatedAt: new Date().toISOString() };
-    saveServiceLog(updated);
-    reload();
+  const updateLog = useCallback(async (id, data) => {
+    await api.put(`/service-logs/${id}`, data);
+    await reload();
   }, [reload]);
 
-  const removeLog = useCallback((id) => {
-    deleteServiceLog(id);
-    reload();
+  const removeLog = useCallback(async (id) => {
+    await api.delete(`/service-logs/${id}`);
+    await reload();
   }, [reload]);
 
-  return { logs, addLog, updateLog, removeLog };
+  return { logs, loading, addLog, updateLog, removeLog };
 }

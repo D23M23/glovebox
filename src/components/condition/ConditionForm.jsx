@@ -42,6 +42,10 @@ export default function ConditionForm({ defaultValues, onSubmit, onCancel, submi
         <input {...register('inspector')} placeholder="Your name" className={inp()} />
       </Field>
 
+      <Field label="Location">
+        <input {...register('location')} placeholder="Bay 3, East Lot, etc." className={inp()} />
+      </Field>
+
       <Field label="Notes">
         <textarea
           {...register('notes')}

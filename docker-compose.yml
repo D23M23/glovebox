@@ -6,4 +6,20 @@ services:
         VITE_APP_TITLE: ${VITE_APP_TITLE}
     ports:
       - "${APP_PORT:-3000}:80"
+    depends_on:
+      - api
     restart: unless-stopped
+
+  api:
+    build:
+      context: ./server
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      NODE_ENV: production
+      DATA_DIR: /app/data
+    volumes:
+      - glovebox_data:/app/data
+    restart: unless-stopped
+
+volumes:
+  glovebox_data:

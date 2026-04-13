@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import { Wrench, Calendar, Gauge, DollarSign, User, Trash2, Edit } from 'lucide-react';
+import { Wrench, Calendar, Gauge, DollarSign, User, Trash2, Edit, MapPin } from 'lucide-react';
 
 function fmt(d) {
   if (!d) return null;
@@ -10,11 +10,9 @@ export default function ServiceCard({ entry, onEdit, onDelete }) {
   return (
     <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
       <div className="flex items-start justify-between gap-2 mb-2">
-        <div className="flex items-center gap-2">
-          <span className="inline-block px-2.5 py-0.5 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
-            {entry.serviceType}
-          </span>
-        </div>
+        <span className="inline-block px-2.5 py-0.5 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
+          {entry.serviceType}
+        </span>
         <div className="flex gap-1 shrink-0">
           {onEdit && (
             <button onClick={() => onEdit(entry)} className="p-1.5 rounded-lg text-gray-400 hover:bg-gray-100">
@@ -27,23 +25,14 @@ export default function ServiceCard({ entry, onEdit, onDelete }) {
         </div>
       </div>
 
-      {entry.description && (
-        <p className="text-sm text-gray-800 mb-3">{entry.description}</p>
-      )}
+      {entry.description && <p className="text-sm text-gray-800 mb-3">{entry.description}</p>}
 
       <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs text-gray-500">
-        {entry.date && (
-          <Chip icon={Calendar} label={fmt(entry.date)} />
-        )}
-        {entry.mileageAtService && (
-          <Chip icon={Gauge} label={`${Number(entry.mileageAtService).toLocaleString()} mi`} />
-        )}
-        {entry.cost != null && entry.cost !== '' && (
-          <Chip icon={DollarSign} label={`$${Number(entry.cost).toFixed(2)}`} />
-        )}
-        {entry.technician && (
-          <Chip icon={User} label={entry.technician} />
-        )}
+        {entry.date && <Chip icon={Calendar} label={fmt(entry.date)} />}
+        {entry.mileageAtService && <Chip icon={Gauge} label={`${Number(entry.mileageAtService).toLocaleString()} mi`} />}
+        {entry.cost != null && entry.cost !== '' && <Chip icon={DollarSign} label={`$${Number(entry.cost).toFixed(2)}`} />}
+        {entry.technician && <Chip icon={User} label={entry.technician} />}
+        {entry.location && <Chip icon={MapPin} label={entry.location} />}
       </div>
 
       {(entry.nextServiceDue || entry.nextServiceMileage) && (
@@ -56,8 +45,12 @@ export default function ServiceCard({ entry, onEdit, onDelete }) {
         </div>
       )}
 
-      {entry.notes && (
-        <p className="mt-2 text-xs text-gray-500 italic">{entry.notes}</p>
+      {entry.notes && <p className="mt-2 text-xs text-gray-500 italic">{entry.notes}</p>}
+
+      {entry.createdByName && (
+        <p className="mt-2 pt-2 border-t border-gray-100 text-xs text-gray-400">
+          Logged by <span className="font-medium text-gray-500">{entry.createdByName}</span>
+        </p>
       )}
     </div>
   );

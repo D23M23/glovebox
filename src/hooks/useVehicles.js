@@ -1,39 +1,37 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getVehicles, saveVehicle, deleteVehicle } from '../lib/storage';
+import { api } from '../lib/api';
 
 export function useVehicles() {
   const [vehicles, setVehicles] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    setVehicles(getVehicles());
+  const reload = useCallback(async () => {
+    setLoading(true);
+    try {
+      const data = await api.get('/vehicles');
+      setVehicles(data ?? []);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  const addVehicle = useCallback((data) => {
-    const vehicle = {
-      ...data,
-      id: crypto.randomUUID(),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      isActive: true,
-    };
-    saveVehicle(vehicle);
-    setVehicles(getVehicles());
+  useEffect(() => { reload(); }, [reload]);
+
+  const addVehicle = useCallback(async (data) => {
+    const vehicle = await api.post('/vehicles', data);
+    await reload();
     return vehicle;
-  }, []);
+  }, [reload]);
 
-  const updateVehicle = useCallback((id, data) => {
-    const vehicles = getVehicles();
-    const existing = vehicles.find((v) => v.id === id);
-    if (!existing) return;
-    const updated = { ...existing, ...data, id, updatedAt: new Date().toISOString() };
-    saveVehicle(updated);
-    setVehicles(getVehicles());
-  }, []);
+  const updateVehicle = useCallback(async (id, data) => {
+    await api.put(`/vehicles/${id}`, data);
+    await reload();
+  }, [reload]);
 
-  const removeVehicle = useCallback((id) => {
-    deleteVehicle(id);
-    setVehicles(getVehicles());
-  }, []);
+  const removeVehicle = useCallback(async (id) => {
+    await api.delete(`/vehicles/${id}`);
+    await reload();
+  }, [reload]);
 
-  return { vehicles, addVehicle, updateVehicle, removeVehicle };
+  return { vehicles, loading, addVehicle, updateVehicle, removeVehicle };
 }

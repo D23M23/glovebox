@@ -1,24 +1,29 @@
 import Compressor from 'compressorjs';
+import { api } from './api';
 
 /**
- * Compress an image File and return a base64 dataUrl.
- * @param {File} file
- * @returns {Promise<string>} dataUrl
+ * Compress an image File to a Blob.
  */
-export function compressAndEncode(file) {
+function compressToBlob(file) {
   return new Promise((resolve, reject) => {
     new Compressor(file, {
       quality: 0.6,
       maxWidth: 1200,
       maxHeight: 1200,
-      convertSize: 200000, // convert PNG > 200KB to JPEG
-      success(result) {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(result);
-      },
+      convertSize: 200000,
+      success: resolve,
       error: reject,
     });
   });
+}
+
+/**
+ * Compress and upload a photo to the server.
+ * Returns { id, filename, takenAt }
+ */
+export async function compressAndUpload(file) {
+  const blob = await compressToBlob(file);
+  const form = new FormData();
+  form.append('photo', blob, file.name || 'photo.jpg');
+  return api.upload('/uploads', form);
 }

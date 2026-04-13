@@ -12,7 +12,6 @@ import EmptyState from '../components/shared/EmptyState';
 import ConfirmDialog from '../components/shared/ConfirmDialog';
 import PageHeader from '../components/layout/PageHeader';
 import { exportServiceCSV, exportConditionCSV, downloadCSV, exportVehiclePDF } from '../lib/export';
-import { getServiceLogs, getConditionLogs } from '../lib/storage';
 
 export default function VehicleDetailPage() {
   const { id } = useParams();
@@ -72,13 +71,13 @@ export default function VehicleDetailPage() {
               </button>
               {exportOpen && (
                 <div className="absolute right-0 top-9 bg-white border border-gray-200 rounded-2xl shadow-lg overflow-hidden z-50 w-44">
-                  <button onClick={() => { downloadCSV(exportServiceCSV(vehicle, getServiceLogs(id)), `${vehicle.licensePlate}_service.csv`); setExportOpen(false); }} className="w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50">
+                  <button onClick={() => { downloadCSV(exportServiceCSV(vehicle, serviceLogs), `${vehicle.licensePlate}_service.csv`); setExportOpen(false); }} className="w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50">
                     Service CSV
                   </button>
-                  <button onClick={() => { downloadCSV(exportConditionCSV(vehicle, getConditionLogs(id)), `${vehicle.licensePlate}_condition.csv`); setExportOpen(false); }} className="w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50">
+                  <button onClick={() => { downloadCSV(exportConditionCSV(vehicle, conditionLogs), `${vehicle.licensePlate}_condition.csv`); setExportOpen(false); }} className="w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50">
                     Condition CSV
                   </button>
-                  <button onClick={() => { exportVehiclePDF(vehicle, getServiceLogs(id), getConditionLogs(id)); setExportOpen(false); }} className="w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50">
+                  <button onClick={() => { exportVehiclePDF(vehicle, serviceLogs, conditionLogs); setExportOpen(false); }} className="w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50">
                     Full PDF
                   </button>
                 </div>

@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import { Calendar, Gauge, User, Camera, Trash2, Edit, ChevronDown, ChevronUp } from 'lucide-react';
+import { Calendar, Gauge, User, Camera, Trash2, Edit, ChevronDown, ChevronUp, MapPin } from 'lucide-react';
 import { useState } from 'react';
 import { RatingDisplay } from '../shared/RatingStars';
 
@@ -33,10 +33,17 @@ export default function ConditionCard({ entry, onEdit, onDelete }) {
           {entry.date && <Chip icon={Calendar} label={fmt(entry.date)} />}
           {entry.mileageAtInspection && <Chip icon={Gauge} label={`${Number(entry.mileageAtInspection).toLocaleString()} mi`} />}
           {entry.inspector && <Chip icon={User} label={entry.inspector} />}
+          {entry.location && <Chip icon={MapPin} label={entry.location} />}
           {photos.length > 0 && <Chip icon={Camera} label={`${photos.length} photo${photos.length !== 1 ? 's' : ''}`} />}
         </div>
 
         {entry.notes && <p className="text-sm text-gray-600">{entry.notes}</p>}
+
+        {entry.createdByName && (
+          <p className="mt-2 pt-2 border-t border-gray-100 text-xs text-gray-400">
+            Logged by <span className="font-medium text-gray-500">{entry.createdByName}</span>
+          </p>
+        )}
       </div>
 
       {photos.length > 0 && (
@@ -53,7 +60,7 @@ export default function ConditionCard({ entry, onEdit, onDelete }) {
             <div className="grid grid-cols-2 gap-1 p-2 bg-gray-50">
               {photos.map((p) => (
                 <div key={p.id} className="relative rounded-lg overflow-hidden aspect-video bg-gray-100">
-                  <img src={p.dataUrl} alt={p.caption || 'Vehicle photo'} className="w-full h-full object-cover" />
+                  <img src={`/uploads/${p.filename}`} alt={p.caption || 'Vehicle photo'} className="w-full h-full object-cover" />
                   {p.caption && (
                     <div className="absolute bottom-0 left-0 right-0 bg-black/50 px-2 py-1">
                       <p className="text-white text-[10px] truncate">{p.caption}</p>

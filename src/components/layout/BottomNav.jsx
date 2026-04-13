@@ -1,15 +1,20 @@
 import { NavLink } from 'react-router-dom';
-import { Car, Wrench, ClipboardCheck } from 'lucide-react';
-
-const tabs = [
-  { to: '/', label: 'Vehicles', icon: Car, end: true },
-  { to: '/service', label: 'Service', icon: Wrench },
-  { to: '/condition', label: 'Condition', icon: ClipboardCheck },
-];
+import { Car, Wrench, ClipboardCheck, Users } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function BottomNav() {
+  const { user } = useAuth();
+  if (!user) return null;
+
+  const tabs = [
+    { to: '/', label: 'Vehicles', icon: Car, end: true },
+    { to: '/service', label: 'Service', icon: Wrench },
+    { to: '/condition', label: 'Condition', icon: ClipboardCheck },
+    ...(user.role === 'admin' ? [{ to: '/users', label: 'Users', icon: Users }] : []),
+  ];
+
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 safe-area-inset-bottom">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200">
       <div className="flex max-w-lg mx-auto">
         {tabs.map(({ to, label, icon: Icon, end }) => (
           <NavLink
