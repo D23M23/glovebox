@@ -2,6 +2,7 @@ import { format } from 'date-fns';
 import { Calendar, Gauge, User, Camera, Trash2, Edit, ChevronDown, ChevronUp, MapPin } from 'lucide-react';
 import { useState } from 'react';
 import { RatingDisplay } from '../shared/RatingStars';
+import PhotoLightbox from '../shared/PhotoLightbox';
 
 function fmt(d) {
   if (!d) return null;
@@ -10,6 +11,7 @@ function fmt(d) {
 
 export default function ConditionCard({ entry, onEdit, onDelete }) {
   const [expanded, setExpanded] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(null);
   const photos = entry.photos ?? [];
 
   return (
@@ -58,20 +60,35 @@ export default function ConditionCard({ entry, onEdit, onDelete }) {
 
           {expanded && (
             <div className="grid grid-cols-2 gap-1 p-2 bg-gray-50">
-              {photos.map((p) => (
-                <div key={p.id} className="relative rounded-lg overflow-hidden aspect-video bg-gray-100">
-                  <img src={`/uploads/${p.filename}`} alt={p.caption || 'Vehicle photo'} className="w-full h-full object-cover" />
+              {photos.map((p, i) => (
+                <button
+                  key={p.id}
+                  onClick={() => setLightboxIndex(i)}
+                  className="relative rounded-lg overflow-hidden aspect-video bg-gray-100 group focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  aria-label={`View photo ${i + 1}${p.caption ? ': ' + p.caption : ''}`}
+                >
+                  <img src={`/uploads/${p.filename}`} alt={p.caption || 'Vehicle photo'} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                    <Camera size={20} className="text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-lg" />
+                  </div>
                   {p.caption && (
                     <div className="absolute bottom-0 left-0 right-0 bg-black/50 px-2 py-1">
                       <p className="text-white text-[10px] truncate">{p.caption}</p>
                     </div>
                   )}
-                </div>
+                </button>
               ))}
             </div>
           )}
         </>
       )}
+
+      <PhotoLightbox
+        photos={photos}
+        index={lightboxIndex}
+        onClose={() => setLightboxIndex(null)}
+        onChange={setLightboxIndex}
+      />
     </div>
   );
 }
