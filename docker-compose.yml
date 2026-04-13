@@ -1,0 +1,9 @@
+services:
+  app:
+    build:
+      context: .
+      args:
+        VITE_APP_TITLE: ${VITE_APP_TITLE}
+    ports:
+      - "${APP_PORT:-3000}:80"
+    restart: unless-stopped
