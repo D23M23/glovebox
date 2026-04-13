@@ -2,6 +2,8 @@ import { createContext, useContext, useState, useEffect } from 'react';
 
 const ThemeContext = createContext(null);
 const THEME_KEY = 'gb_theme';
+const LAYOUT_KEY = 'gb_layout';
+
 export const THEMES = [
   {
     id: 'light',
@@ -33,20 +35,30 @@ export function ThemeProvider({ children }) {
   const [theme, setThemeState] = useState(
     () => localStorage.getItem(THEME_KEY) || 'light'
   );
+  const [layout, setLayoutState] = useState(
+    () => localStorage.getItem(LAYOUT_KEY) || 'mobile'
+  );
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem(THEME_KEY, theme);
   }, [theme]);
 
-  // Apply stored theme immediately on mount
   useEffect(() => {
-    const stored = localStorage.getItem(THEME_KEY) || 'light';
-    document.documentElement.setAttribute('data-theme', stored);
+    document.documentElement.setAttribute('data-layout', layout);
+    localStorage.setItem(LAYOUT_KEY, layout);
+  }, [layout]);
+
+  // Apply stored preferences immediately on mount
+  useEffect(() => {
+    const storedTheme = localStorage.getItem(THEME_KEY) || 'light';
+    const storedLayout = localStorage.getItem(LAYOUT_KEY) || 'mobile';
+    document.documentElement.setAttribute('data-theme', storedTheme);
+    document.documentElement.setAttribute('data-layout', storedLayout);
   }, []);
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme: setThemeState }}>
+    <ThemeContext.Provider value={{ theme, setTheme: setThemeState, layout, setLayout: setLayoutState }}>
       {children}
     </ThemeContext.Provider>
   );

@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { ThemeProvider } from './contexts/ThemeContext';
+import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import BottomNav from './components/layout/BottomNav';
+import SideNav from './components/layout/SideNav';
 import UserMenu from './components/layout/UserMenu';
 import VehiclesPage from './pages/VehiclesPage';
 import AddVehiclePage from './pages/AddVehiclePage';
@@ -25,20 +26,26 @@ function ProtectedRoute({ children, adminOnly = false }) {
 }
 
 function AppShell() {
+  const { layout } = useTheme();
+  const isDesktop = layout === 'desktop';
+
   return (
-    <div className="flex flex-col min-h-svh bg-gray-50">
-      <UserMenu />
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/" element={<ProtectedRoute><VehiclesPage /></ProtectedRoute>} />
-        <Route path="/vehicles/new" element={<ProtectedRoute><AddVehiclePage /></ProtectedRoute>} />
-        <Route path="/vehicles/:id" element={<ProtectedRoute><VehicleDetailPage /></ProtectedRoute>} />
-        <Route path="/vehicles/:id/edit" element={<ProtectedRoute><EditVehiclePage /></ProtectedRoute>} />
-        <Route path="/service" element={<ProtectedRoute><ServicePage /></ProtectedRoute>} />
-        <Route path="/condition" element={<ProtectedRoute><ConditionPage /></ProtectedRoute>} />
-        <Route path="/users" element={<ProtectedRoute adminOnly><UsersPage /></ProtectedRoute>} />
-      </Routes>
-      <BottomNav />
+    <div className={`flex min-h-svh bg-gray-50 ${isDesktop ? 'flex-row' : 'flex-col'}`}>
+      {isDesktop && <SideNav />}
+      <div className="flex flex-col flex-1 min-w-0">
+        <UserMenu />
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/" element={<ProtectedRoute><VehiclesPage /></ProtectedRoute>} />
+          <Route path="/vehicles/new" element={<ProtectedRoute><AddVehiclePage /></ProtectedRoute>} />
+          <Route path="/vehicles/:id" element={<ProtectedRoute><VehicleDetailPage /></ProtectedRoute>} />
+          <Route path="/vehicles/:id/edit" element={<ProtectedRoute><EditVehiclePage /></ProtectedRoute>} />
+          <Route path="/service" element={<ProtectedRoute><ServicePage /></ProtectedRoute>} />
+          <Route path="/condition" element={<ProtectedRoute><ConditionPage /></ProtectedRoute>} />
+          <Route path="/users" element={<ProtectedRoute adminOnly><UsersPage /></ProtectedRoute>} />
+        </Routes>
+      </div>
+      {!isDesktop && <BottomNav />}
     </div>
   );
 }

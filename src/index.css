@@ -156,6 +156,29 @@
 .tab-active { border-color: #2563eb; color: #2563eb; }
 .tab-inactive { border-color: transparent; color: var(--gb-text-muted, #6b7280); }
 
+/* ─── DESKTOP LAYOUT overrides ────────────────────────────────────────────── */
+[data-layout="desktop"] .max-w-lg { max-width: 860px !important; }
+[data-layout="desktop"] .pb-24 { padding-bottom: 1.5rem !important; }
+
+/* ─── SIDE NAV themed components ───────────────────────────────────────────── */
+.side-nav { background: var(--gb-surface, #fff); border-color: var(--gb-border, #e5e7eb); }
+.side-nav-header { border-color: var(--gb-border, #e5e7eb); }
+.side-nav-title { color: var(--gb-text, #111827); }
+.side-nav-item { color: var(--gb-text-muted, #6b7280); }
+.side-nav-item:hover { background: var(--gb-surface2, #f3f4f6); color: var(--gb-text, #111827); }
+.side-nav-item-active { background: #eff6ff; color: #2563eb; }
+[data-theme="dark"] .side-nav-item-active { background: #1e3a8a !important; color: #93c5fd !important; }
+[data-theme="access"] .side-nav { background: #000 !important; border-color: #fff !important; }
+[data-theme="access"] .side-nav-item-active { background: #ffff00 !important; color: #000 !important; }
+[data-theme="access"] .side-nav-item { color: #fff !important; }
+[data-theme="access"] .side-nav-item:hover { background: #222 !important; }
+[data-theme="classic"] .side-nav { background: #c0c0c0 !important; border-color: #808080 !important; }
+[data-theme="classic"] .side-nav-item-active { background: #000080 !important; color: #fff !important; }
+[data-theme="classic"] .side-nav-item { color: #000 !important; }
+[data-theme="classic"] .side-nav-item:hover { background: #d4d0c8 !important; }
+[data-theme="classic"] .side-nav-title { color: #fff !important; }
+[data-theme="classic"] .side-nav-header { background: #000080 !important; border-color: #808080 !important; }
+
 /* ─── USER MENU themed components ─────────────────────────────────────────── */
 .user-avatar { background: #2563eb; color: #fff; }
 [data-theme="classic"] .user-avatar { background: #000080; border: 2px solid #fff; box-shadow: inset -1px -1px #000, inset 1px 1px #fff !important; }

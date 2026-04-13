@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { X, Check, Lock, Palette } from 'lucide-react';
+import { X, Check, Lock, Palette, Monitor, Smartphone } from 'lucide-react';
 import { useTheme, THEMES } from '../../contexts/ThemeContext';
 import { api } from '../../lib/api';
 
 export default function SettingsModal({ open, onClose }) {
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, layout, setLayout } = useTheme();
   const [tab, setTab] = useState('theme');
   const [pwSuccess, setPwSuccess] = useState(false);
   const [pwError, setPwError] = useState('');
@@ -68,32 +68,66 @@ export default function SettingsModal({ open, onClose }) {
         {/* Body */}
         <div className="overflow-y-auto flex-1 px-5 py-4">
           {tab === 'theme' && (
-            <div className="space-y-3">
-              <p className="text-xs settings-desc mb-4">Choose how GloveBox looks on this device.</p>
-              <div className="grid grid-cols-2 gap-3">
-                {THEMES.map((t) => (
-                  <button
-                    key={t.id}
-                    onClick={() => setTheme(t.id)}
-                    className={`theme-card relative rounded-2xl p-3 text-left border-2 transition-all ${
-                      theme === t.id ? 'theme-card-active' : 'theme-card-inactive'
-                    }`}
-                  >
-                    {/* Preview swatch */}
-                    <div className="flex gap-1 mb-2.5 rounded-lg overflow-hidden h-10">
-                      {t.preview.map((c, i) => (
-                        <div key={i} className="flex-1 rounded" style={{ background: c }} />
-                      ))}
-                    </div>
-                    <p className="text-sm font-semibold settings-card-title">{t.label}</p>
-                    <p className="text-xs settings-card-desc">{t.desc}</p>
-                    {theme === t.id && (
-                      <div className="absolute top-2 right-2 w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center">
-                        <Check size={11} className="text-white" />
+            <div className="space-y-5">
+              {/* Theme picker */}
+              <div>
+                <p className="text-xs settings-desc mb-3">Choose how GloveBox looks on this device.</p>
+                <div className="grid grid-cols-2 gap-3">
+                  {THEMES.map((t) => (
+                    <button
+                      key={t.id}
+                      onClick={() => setTheme(t.id)}
+                      className={`theme-card relative rounded-2xl p-3 text-left border-2 transition-all ${
+                        theme === t.id ? 'theme-card-active' : 'theme-card-inactive'
+                      }`}
+                    >
+                      {/* Preview swatch */}
+                      <div className="flex gap-1 mb-2.5 rounded-lg overflow-hidden h-10">
+                        {t.preview.map((c, i) => (
+                          <div key={i} className="flex-1 rounded" style={{ background: c }} />
+                        ))}
                       </div>
-                    )}
-                  </button>
-                ))}
+                      <p className="text-sm font-semibold settings-card-title">{t.label}</p>
+                      <p className="text-xs settings-card-desc">{t.desc}</p>
+                      {theme === t.id && (
+                        <div className="absolute top-2 right-2 w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center">
+                          <Check size={11} className="text-white" />
+                        </div>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Layout picker */}
+              <div>
+                <p className="text-xs font-semibold settings-label mb-1">Layout</p>
+                <p className="text-xs settings-desc mb-3">Switch between mobile and desktop navigation.</p>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { id: 'mobile', label: 'Mobile', desc: 'Bottom tab bar', icon: Smartphone },
+                    { id: 'desktop', label: 'Desktop', desc: 'Side navigation', icon: Monitor },
+                  ].map(({ id, label, desc, icon: Icon }) => (
+                    <button
+                      key={id}
+                      onClick={() => setLayout(id)}
+                      className={`theme-card relative rounded-2xl p-3 text-left border-2 transition-all ${
+                        layout === id ? 'theme-card-active' : 'theme-card-inactive'
+                      }`}
+                    >
+                      <div className="flex items-center justify-center h-10 mb-2.5">
+                        <Icon size={28} className={layout === id ? 'text-blue-600' : 'settings-card-desc'} />
+                      </div>
+                      <p className="text-sm font-semibold settings-card-title">{label}</p>
+                      <p className="text-xs settings-card-desc">{desc}</p>
+                      {layout === id && (
+                        <div className="absolute top-2 right-2 w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center">
+                          <Check size={11} className="text-white" />
+                        </div>
+                      )}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           )}

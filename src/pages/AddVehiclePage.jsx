@@ -7,8 +7,8 @@ export default function AddVehiclePage() {
   const navigate = useNavigate();
   const { addVehicle } = useVehicles();
 
-  function handleSubmit(data) {
-    const v = addVehicle(data);
+  async function handleSubmit(data) {
+    const v = await addVehicle(data);
     navigate(`/vehicles/${v.id}`, { replace: true });
   }
 
