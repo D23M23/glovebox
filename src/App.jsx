@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import BottomNav from './components/layout/BottomNav';
+import UserMenu from './components/layout/UserMenu';
 import VehiclesPage from './pages/VehiclesPage';
 import AddVehiclePage from './pages/AddVehiclePage';
 import EditVehiclePage from './pages/EditVehiclePage';
@@ -25,6 +27,7 @@ function ProtectedRoute({ children, adminOnly = false }) {
 function AppShell() {
   return (
     <div className="flex flex-col min-h-svh bg-gray-50">
+      <UserMenu />
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/" element={<ProtectedRoute><VehiclesPage /></ProtectedRoute>} />
@@ -43,9 +46,11 @@ function AppShell() {
 export default function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <AppShell />
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <AppShell />
+        </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   );
 }

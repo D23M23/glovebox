@@ -1,14 +1,12 @@
 import { Link } from 'react-router-dom';
-import { Plus, Car, LogOut } from 'lucide-react';
+import { Plus, Car } from 'lucide-react';
 import { useVehicles } from '../hooks/useVehicles';
-import { useAuth } from '../contexts/AuthContext';
 import VehicleCard from '../components/vehicle/VehicleCard';
 import EmptyState from '../components/shared/EmptyState';
 import PageHeader from '../components/layout/PageHeader';
 
 export default function VehiclesPage() {
   const { vehicles } = useVehicles();
-  const { user, logout } = useAuth();
   const active = vehicles.filter((v) => v.isActive !== false);
 
   return (
@@ -16,15 +14,9 @@ export default function VehiclesPage() {
       <PageHeader
         title="GloveBox"
         actions={
-          <div className="flex items-center gap-1">
-            <span className="text-xs text-gray-500 mr-1 hidden sm:block">{user?.name}</span>
-            <Link to="/vehicles/new" className="p-2 rounded-full bg-blue-600 text-white hover:bg-blue-700">
-              <Plus size={20} />
-            </Link>
-            <button onClick={logout} className="p-2 rounded-full text-gray-500 hover:bg-gray-100" title="Sign out">
-              <LogOut size={20} />
-            </button>
-          </div>
+          <Link to="/vehicles/new" className="p-2 rounded-full bg-blue-600 text-white hover:bg-blue-700">
+            <Plus size={20} />
+          </Link>
         }
       />
 

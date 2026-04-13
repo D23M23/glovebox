@@ -1,10 +1,7 @@
 @import "tailwindcss";
 
 @layer base {
-  * {
-    -webkit-tap-highlight-color: transparent;
-    box-sizing: border-box;
-  }
+  * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
   body {
     margin: 0;
     background: #f9fafb;
@@ -13,9 +10,161 @@
     -webkit-font-smoothing: antialiased;
     overscroll-behavior-y: contain;
   }
-  #root {
-    min-height: 100svh;
-    display: flex;
-    flex-direction: column;
-  }
+  #root { min-height: 100svh; display: flex; flex-direction: column; }
 }
+
+/* ─── LIGHT (default) ──────────────────────────────────────────────────────── */
+:root, [data-theme="light"] {
+  --gb-bg: #f9fafb;
+  --gb-surface: #ffffff;
+  --gb-surface2: #f3f4f6;
+  --gb-border: #e5e7eb;
+  --gb-text: #111827;
+  --gb-text-muted: #6b7280;
+  --gb-primary: #2563eb;
+  --gb-primary-fg: #ffffff;
+  --gb-nav-bg: #ffffff;
+  --gb-header-bg: #ffffff;
+}
+
+/* ─── DARK ─────────────────────────────────────────────────────────────────── */
+[data-theme="dark"] {
+  --gb-bg: #0f172a;
+  --gb-surface: #1e293b;
+  --gb-surface2: #334155;
+  --gb-border: #475569;
+  --gb-text: #f1f5f9;
+  --gb-text-muted: #94a3b8;
+  --gb-primary: #3b82f6;
+  --gb-primary-fg: #ffffff;
+  --gb-nav-bg: #1e293b;
+  --gb-header-bg: #1e293b;
+  color-scheme: dark;
+}
+[data-theme="dark"] body { background: #0f172a; color: #f1f5f9; }
+[data-theme="dark"] .bg-gray-50, [data-theme="dark"] .min-h-svh { background-color: #0f172a !important; }
+[data-theme="dark"] .bg-white { background-color: #1e293b !important; }
+[data-theme="dark"] .bg-gray-100 { background-color: #334155 !important; }
+[data-theme="dark"] .bg-gray-50 { background-color: #0f172a !important; }
+[data-theme="dark"] .text-gray-900 { color: #f1f5f9 !important; }
+[data-theme="dark"] .text-gray-800 { color: #e2e8f0 !important; }
+[data-theme="dark"] .text-gray-700 { color: #cbd5e1 !important; }
+[data-theme="dark"] .text-gray-600 { color: #94a3b8 !important; }
+[data-theme="dark"] .text-gray-500 { color: #64748b !important; }
+[data-theme="dark"] .text-gray-400 { color: #475569 !important; }
+[data-theme="dark"] .border-gray-100, [data-theme="dark"] .border-gray-200 { border-color: #334155 !important; }
+[data-theme="dark"] .border-gray-300 { border-color: #64748b !important; }
+[data-theme="dark"] .divide-gray-100 > * + * { border-color: #334155 !important; }
+[data-theme="dark"] input:not([type="range"]), [data-theme="dark"] select, [data-theme="dark"] textarea {
+  background-color: #0f172a !important;
+  color: #f1f5f9 !important;
+  border-color: #475569 !important;
+}
+[data-theme="dark"] .hover\:bg-gray-50:hover, [data-theme="dark"] .hover\:bg-gray-100:hover { background-color: #334155 !important; }
+[data-theme="dark"] nav.fixed { background-color: #1e293b !important; border-color: #334155 !important; }
+[data-theme="dark"] header.sticky { background-color: #1e293b !important; border-color: #334155 !important; }
+[data-theme="dark"] .bg-blue-50 { background-color: #1e3a8a !important; }
+[data-theme="dark"] .bg-green-50 { background-color: #14532d !important; }
+[data-theme="dark"] .bg-red-50 { background-color: #450a0a !important; }
+[data-theme="dark"] .bg-orange-100 { background-color: #431407 !important; }
+[data-theme="dark"] .text-orange-700 { color: #fb923c !important; }
+[data-theme="dark"] .bg-blue-100 { background-color: #1e3a8a !important; }
+
+/* ─── ACCESSIBILITY (high contrast) ───────────────────────────────────────── */
+[data-theme="access"] {
+  color-scheme: dark;
+}
+[data-theme="access"] body { background: #000 !important; color: #fff !important; font-size: 17px; }
+[data-theme="access"] .bg-gray-50, [data-theme="access"] .min-h-svh { background: #000 !important; }
+[data-theme="access"] .bg-white, [data-theme="access"] .bg-gray-100 { background: #111 !important; }
+[data-theme="access"] .text-gray-900, [data-theme="access"] .text-gray-800,
+[data-theme="access"] .text-gray-700, [data-theme="access"] .text-gray-600 { color: #fff !important; }
+[data-theme="access"] .text-gray-500, [data-theme="access"] .text-gray-400 { color: #d1d5db !important; }
+[data-theme="access"] .border-gray-100, [data-theme="access"] .border-gray-200,
+[data-theme="access"] .border-gray-300 { border-color: #fff !important; }
+[data-theme="access"] .shadow-sm { box-shadow: 0 0 0 2px #fff !important; }
+[data-theme="access"] .bg-blue-600, [data-theme="access"] .hover\:bg-blue-700:hover { background: #ffff00 !important; }
+[data-theme="access"] .text-white { color: #000 !important; }
+[data-theme="access"] .bg-emerald-600, [data-theme="access"] .hover\:bg-emerald-700:hover { background: #00ff00 !important; }
+[data-theme="access"] .text-blue-600 { color: #ffff00 !important; }
+[data-theme="access"] .text-emerald-600 { color: #00ff00 !important; }
+[data-theme="access"] input, [data-theme="access"] select, [data-theme="access"] textarea {
+  background: #000 !important; color: #fff !important;
+  border: 2px solid #fff !important;
+}
+[data-theme="access"] nav.fixed { background: #000 !important; border-top: 2px solid #fff !important; }
+[data-theme="access"] header.sticky { background: #000 !important; border-bottom: 2px solid #fff !important; }
+[data-theme="access"] .rounded-2xl, [data-theme="access"] .rounded-xl { border: 2px solid #fff; }
+[data-theme="access"] .bg-amber-400 { background: #ffff00 !important; }
+[data-theme="access"] .text-amber-400 { color: #ffff00 !important; }
+[data-theme="access"] .text-gray-300 { color: #555 !important; }
+
+/* ─── WINDOWS CLASSIC ──────────────────────────────────────────────────────── */
+[data-theme="classic"] * { border-radius: 0 !important; font-family: 'Segoe UI', Tahoma, sans-serif !important; }
+[data-theme="classic"] body { background: #c0c0c0 !important; color: #000 !important; }
+[data-theme="classic"] .bg-gray-50, [data-theme="classic"] .min-h-svh { background: #c0c0c0 !important; }
+[data-theme="classic"] .bg-white, [data-theme="classic"] .bg-gray-100 { background: #d4d0c8 !important; }
+[data-theme="classic"] .text-gray-900, [data-theme="classic"] .text-gray-800,
+[data-theme="classic"] .text-gray-700, [data-theme="classic"] .text-gray-600 { color: #000 !important; }
+[data-theme="classic"] .text-gray-500, [data-theme="classic"] .text-gray-400 { color: #444 !important; }
+[data-theme="classic"] .border-gray-100, [data-theme="classic"] .border-gray-200 { border-color: #808080 !important; }
+[data-theme="classic"] .shadow-sm, [data-theme="classic"] .shadow-xl, [data-theme="classic"] .shadow-lg, [data-theme="classic"] .shadow-md {
+  box-shadow: inset -1px -1px #000, inset 1px 1px #fff, inset -2px -2px #808080, inset 2px 2px #dfdfdf !important;
+}
+[data-theme="classic"] .bg-blue-600 { background: #000080 !important; }
+[data-theme="classic"] .hover\:bg-blue-700:hover { background: #000060 !important; }
+[data-theme="classic"] .bg-emerald-600 { background: #006400 !important; }
+[data-theme="classic"] .bg-blue-100, [data-theme="classic"] .bg-blue-50 { background: #c0c0c0 !important; }
+[data-theme="classic"] .text-blue-600, [data-theme="classic"] .text-blue-700 { color: #000080 !important; }
+[data-theme="classic"] input, [data-theme="classic"] select, [data-theme="classic"] textarea {
+  background: #fff !important; color: #000 !important;
+  border: 2px inset #808080 !important;
+  box-shadow: inset 1px 1px #000, inset -1px -1px #fff !important;
+}
+[data-theme="classic"] nav.fixed {
+  background: #c0c0c0 !important;
+  border-top: 2px solid !important;
+  border-color: #dfdfdf #808080 #808080 #dfdfdf !important;
+  box-shadow: none !important;
+}
+[data-theme="classic"] header.sticky {
+  background: #000080 !important;
+  border-bottom: 2px solid #808080 !important;
+}
+[data-theme="classic"] header.sticky .text-gray-900,
+[data-theme="classic"] header.sticky .text-gray-500 { color: #fff !important; }
+[data-theme="classic"] header.sticky button { color: #fff !important; }
+[data-theme="classic"] .bg-orange-100 { background: #c0c0c0 !important; }
+[data-theme="classic"] .text-orange-700 { color: #800000 !important; }
+[data-theme="classic"] .animate-spin { border-color: #000080 !important; border-top-color: transparent !important; }
+
+/* ─── SETTINGS MODAL themed components ────────────────────────────────────── */
+.settings-modal { background: var(--gb-surface, #fff); }
+.settings-header { background: var(--gb-surface, #fff); }
+.settings-title { color: var(--gb-text, #111827); }
+.settings-close-btn { color: var(--gb-text-muted, #6b7280); }
+.settings-close-btn:hover { background: var(--gb-surface2, #f3f4f6); }
+.settings-tabs { border-color: var(--gb-border, #e5e7eb); }
+.settings-desc { color: var(--gb-text-muted, #6b7280); }
+.settings-label { color: var(--gb-text, #111827); }
+.settings-input { background: var(--gb-surface, #fff) !important; color: var(--gb-text, #111827) !important; border-color: var(--gb-border, #e5e7eb) !important; }
+.theme-card { background: var(--gb-surface, #fff); }
+.theme-card-active { border-color: #2563eb; }
+.theme-card-inactive { border-color: var(--gb-border, #e5e7eb); }
+.settings-card-title { color: var(--gb-text, #111827); }
+.settings-card-desc { color: var(--gb-text-muted, #6b7280); }
+.tab-active { border-color: #2563eb; color: #2563eb; }
+.tab-inactive { border-color: transparent; color: var(--gb-text-muted, #6b7280); }
+
+/* ─── USER MENU themed components ─────────────────────────────────────────── */
+.user-avatar { background: #2563eb; color: #fff; }
+[data-theme="classic"] .user-avatar { background: #000080; border: 2px solid #fff; box-shadow: inset -1px -1px #000, inset 1px 1px #fff !important; }
+[data-theme="access"] .user-avatar { background: #ffff00; color: #000; border: 2px solid #fff; }
+.user-dropdown { background: var(--gb-surface, #fff); border-color: var(--gb-border, #e5e7eb); }
+.user-dropdown-header { background: var(--gb-surface2, #f9fafb); border-color: var(--gb-border, #e5e7eb); }
+.user-dropdown-name { color: var(--gb-text, #111827); }
+.user-dropdown-meta { color: var(--gb-text-muted, #6b7280); }
+.user-dropdown-item { color: var(--gb-text, #374151); }
+.user-dropdown-item:hover { background: var(--gb-surface2, #f9fafb); }
+.user-dropdown-logout { color: #dc2626; }
+.user-dropdown-logout:hover { background: #fef2f2; }

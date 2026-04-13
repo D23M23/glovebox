@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { Plus, Trash2, Users, ShieldCheck } from 'lucide-react';
+import { Plus, Trash2, Users, ShieldCheck, ChevronDown, ChevronUp } from 'lucide-react';
 import { api } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 import PageHeader from '../components/layout/PageHeader';
@@ -14,6 +14,8 @@ export default function UsersPage() {
   const [error, setError] = useState('');
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
+
+  const isAdmin = me?.role === 'admin';
 
   async function reload() {
     const data = await api.get('/auth/users');
@@ -42,43 +44,10 @@ export default function UsersPage() {
 
   return (
     <div className="flex flex-col flex-1">
-      <PageHeader
-        title="Users"
-        backTo="/"
-        actions={
-          <button onClick={() => setShowForm(!showForm)} className="p-2 rounded-full bg-blue-600 text-white hover:bg-blue-700">
-            <Plus size={20} />
-          </button>
-        }
-      />
+      <PageHeader title="Users" backTo="/" />
 
       <div className="max-w-lg mx-auto w-full px-4 py-4 pb-24 space-y-3">
-        {showForm && (
-          <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-2xl p-4 border border-blue-200 space-y-3">
-            <p className="font-medium text-gray-700">New User</p>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <input {...register('name', { required: true })} placeholder="Full name" className={inp(errors.name)} />
-              </div>
-              <div>
-                <input {...register('username', { required: true })} placeholder="Username" autoCapitalize="none" className={inp(errors.username)} />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <input type="password" {...register('password', { required: true, minLength: 6 })} placeholder="Password (min 6)" className={inp(errors.password)} />
-              <select {...register('role')} className={inp()}>
-                <option value="user">Worker</option>
-                <option value="admin">Admin</option>
-              </select>
-            </div>
-            {error && <p className="text-xs text-red-500">{error}</p>}
-            <div className="flex gap-2">
-              <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-2 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50">Cancel</button>
-              <button type="submit" className="flex-1 py-2 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700">Create User</button>
-            </div>
-          </form>
-        )}
-
+        {/* User list */}
         {users.map((u) => (
           <div key={u.id} className="bg-white rounded-2xl px-4 py-3 border border-gray-100 flex items-center gap-3">
             <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
@@ -88,7 +57,7 @@ export default function UsersPage() {
               <p className="font-medium text-gray-900 truncate">{u.name}</p>
               <p className="text-xs text-gray-500">@{u.username} · {u.role}</p>
             </div>
-            {u.id !== me.id && (
+            {u.id !== me.id && isAdmin && (
               <button onClick={() => setDeleteTarget(u)} className="p-1.5 rounded-lg text-gray-400 hover:bg-red-50 hover:text-red-500">
                 <Trash2 size={16} />
               </button>
@@ -96,6 +65,40 @@ export default function UsersPage() {
             {u.id === me.id && <span className="text-xs text-gray-400">You</span>}
           </div>
         ))}
+
+        {/* Add User — admin only */}
+        {isAdmin && (
+          <div className="pt-1">
+            <button
+              onClick={() => { setShowForm(!showForm); setError(''); }}
+              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-2xl border-2 border-dashed border-gray-200 text-sm text-gray-500 hover:border-blue-400 hover:text-blue-600 transition-colors"
+            >
+              {showForm ? <ChevronUp size={16} /> : <Plus size={16} />}
+              {showForm ? 'Cancel' : 'Add User'}
+            </button>
+
+            {showForm && (
+              <form onSubmit={handleSubmit(onSubmit)} className="mt-3 bg-white rounded-2xl p-4 border border-blue-200 space-y-3">
+                <p className="font-medium text-gray-700 text-sm">New User</p>
+                <div className="grid grid-cols-2 gap-3">
+                  <input {...register('name', { required: true })} placeholder="Full name" className={inp(errors.name)} />
+                  <input {...register('username', { required: true })} placeholder="Username" autoCapitalize="none" className={inp(errors.username)} />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <input type="password" {...register('password', { required: true, minLength: 6 })} placeholder="Password (min 6)" className={inp(errors.password)} />
+                  <select {...register('role')} className={inp()}>
+                    <option value="user">Worker</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </div>
+                {error && <p className="text-xs text-red-500">{error}</p>}
+                <button type="submit" className="w-full py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700">
+                  Create User
+                </button>
+              </form>
+            )}
+          </div>
+        )}
       </div>
 
       <ConfirmDialog
