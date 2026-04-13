@@ -22,7 +22,7 @@ function toVehicle(row) {
   };
 }
 
-router.get('/', requireAuth, (req, res) => {
+router.get('/vehicles', requireAuth, (req, res) => {
   const rows = db.prepare(`
     SELECT v.*, u.name as created_by_name
     FROM vehicles v LEFT JOIN users u ON v.created_by = u.id
@@ -32,7 +32,7 @@ router.get('/', requireAuth, (req, res) => {
   res.json(rows.map(toVehicle));
 });
 
-router.post('/', requireAuth, (req, res) => {
+router.post('/vehicles', requireAuth, (req, res) => {
   const { make, model, year, licensePlate, vin, type, color, notes } = req.body;
   if (!make || !model || !year || !licensePlate) {
     return res.status(400).json({ message: 'make, model, year and licensePlate are required' });
@@ -48,7 +48,7 @@ router.post('/', requireAuth, (req, res) => {
   res.status(201).json(toVehicle(row));
 });
 
-router.put('/:id', requireAuth, (req, res) => {
+router.put('/vehicles/:id', requireAuth, (req, res) => {
   const { make, model, year, licensePlate, vin, type, color, notes } = req.body;
   const now = new Date().toISOString();
   db.prepare(`
@@ -60,7 +60,7 @@ router.put('/:id', requireAuth, (req, res) => {
   res.json(toVehicle(row));
 });
 
-router.delete('/:id', requireAuth, (req, res) => {
+router.delete('/vehicles/:id', requireAuth, (req, res) => {
   // Soft delete
   db.prepare('UPDATE vehicles SET is_active = 0, updated_at = ? WHERE id = ?')
     .run(new Date().toISOString(), req.params.id);
