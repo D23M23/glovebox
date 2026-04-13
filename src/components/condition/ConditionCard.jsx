@@ -1,8 +1,9 @@
 import { format } from 'date-fns';
-import { Calendar, Gauge, User, Camera, Trash2, Edit, ChevronDown, ChevronUp, MapPin } from 'lucide-react';
+import { Calendar, Gauge, User, Camera, Trash2, Edit, ChevronDown, ChevronUp, MapPin, AlertTriangle } from 'lucide-react';
 import { useState } from 'react';
 import { RatingDisplay } from '../shared/RatingStars';
 import PhotoLightbox from '../shared/PhotoLightbox';
+import VehicleDamageMap, { DAMAGE_TYPES } from './VehicleDamageMap';
 
 function fmt(d) {
   if (!d) return null;
@@ -11,8 +12,10 @@ function fmt(d) {
 
 export default function ConditionCard({ entry, onEdit, onDelete }) {
   const [expanded, setExpanded] = useState(false);
+  const [mapExpanded, setMapExpanded] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(null);
   const photos = entry.photos ?? [];
+  const damageMarkers = entry.damageMarkers ?? [];
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -37,6 +40,7 @@ export default function ConditionCard({ entry, onEdit, onDelete }) {
           {entry.inspector && <Chip icon={User} label={entry.inspector} />}
           {entry.location && <Chip icon={MapPin} label={entry.location} />}
           {photos.length > 0 && <Chip icon={Camera} label={`${photos.length} photo${photos.length !== 1 ? 's' : ''}`} />}
+          {damageMarkers.length > 0 && <Chip icon={AlertTriangle} label={`${damageMarkers.length} damage`} />}
         </div>
 
         {entry.notes && <p className="text-sm text-gray-600">{entry.notes}</p>}
@@ -78,6 +82,23 @@ export default function ConditionCard({ entry, onEdit, onDelete }) {
                   )}
                 </button>
               ))}
+            </div>
+          )}
+        </>
+      )}
+
+      {damageMarkers.length > 0 && (
+        <>
+          <button
+            onClick={() => setMapExpanded(!mapExpanded)}
+            className="w-full flex items-center justify-between px-4 py-2 bg-gray-50 border-t border-gray-100 text-xs text-gray-500 font-medium"
+          >
+            {mapExpanded ? 'Hide damage map' : `Show damage map (${damageMarkers.length} marker${damageMarkers.length !== 1 ? 's' : ''})`}
+            {mapExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+          </button>
+          {mapExpanded && (
+            <div className="px-4 py-3 bg-gray-50 border-t border-gray-100">
+              <VehicleDamageMap markers={damageMarkers} readonly />
             </div>
           )}
         </>

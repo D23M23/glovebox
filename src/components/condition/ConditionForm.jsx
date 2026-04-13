@@ -3,17 +3,19 @@ import { format } from 'date-fns';
 import { useState } from 'react';
 import { RatingInput } from '../shared/RatingStars';
 import PhotoCapture from './PhotoCapture';
+import VehicleDamageMap from './VehicleDamageMap';
 
 export default function ConditionForm({ defaultValues, onSubmit, onCancel, submitLabel = 'Save' }) {
   const today = format(new Date(), 'yyyy-MM-dd');
   const [photos, setPhotos] = useState(defaultValues?.photos ?? []);
+  const [damageMarkers, setDamageMarkers] = useState(defaultValues?.damageMarkers ?? []);
 
   const { register, handleSubmit, control, formState: { errors } } = useForm({
     defaultValues: defaultValues || { date: today, rating: 3 },
   });
 
   function handleFormSubmit(data) {
-    onSubmit({ ...data, photos });
+    onSubmit({ ...data, photos, damageMarkers });
   }
 
   return (
@@ -53,6 +55,11 @@ export default function ConditionForm({ defaultValues, onSubmit, onCancel, submi
           placeholder="Describe the vehicle condition, damage, wear, etc."
           className={inp() + ' resize-none'}
         />
+      </Field>
+
+      <Field label="Damage Map">
+        <p className="text-xs text-gray-500 mb-2">Tap the vehicle to mark any pre-existing damage.</p>
+        <VehicleDamageMap markers={damageMarkers} onChange={setDamageMarkers} />
       </Field>
 
       <Field label="Photos">

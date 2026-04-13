@@ -23,6 +23,7 @@ function toLog(row, photos) {
       caption: p.caption || '',
       takenAt: p.taken_at,
     })),
+    damageMarkers: row.damage_markers ? JSON.parse(row.damage_markers) : [],
   };
 }
 
@@ -44,7 +45,7 @@ router.get('/vehicles/:vehicleId/condition-logs', requireAuth, (req, res) => {
 
 // POST new
 router.post('/vehicles/:vehicleId/condition-logs', requireAuth, (req, res) => {
-  const { date, mileageAtInspection, rating, inspector, notes, location, photos = [] } = req.body;
+  const { date, mileageAtInspection, rating, inspector, notes, location, photos = [], damageMarkers = [] } = req.body;
   if (!date || !rating) return res.status(400).json({ message: 'date and rating are required' });
 
   const now = new Date().toISOString();
@@ -52,9 +53,9 @@ router.post('/vehicles/:vehicleId/condition-logs', requireAuth, (req, res) => {
 
   db.prepare(`
     INSERT INTO condition_logs
-      (id, vehicle_id, date, mileage_at_inspection, rating, inspector, notes, location, created_at, updated_at, created_by)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `).run(id, req.params.vehicleId, date, mileageAtInspection || null, rating, inspector || null, notes || null, location || null, now, now, req.user.id);
+      (id, vehicle_id, date, mileage_at_inspection, rating, inspector, notes, location, damage_markers, created_at, updated_at, created_by)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(id, req.params.vehicleId, date, mileageAtInspection || null, rating, inspector || null, notes || null, location || null, JSON.stringify(damageMarkers), now, now, req.user.id);
 
   const insertPhoto = db.prepare('INSERT INTO condition_photos (id, condition_log_id, filename, caption, taken_at) VALUES (?, ?, ?, ?, ?)');
   for (const p of photos) {
@@ -67,13 +68,13 @@ router.post('/vehicles/:vehicleId/condition-logs', requireAuth, (req, res) => {
 
 // PUT update
 router.put('/condition-logs/:id', requireAuth, (req, res) => {
-  const { date, mileageAtInspection, rating, inspector, notes, location, photos = [] } = req.body;
+  const { date, mileageAtInspection, rating, inspector, notes, location, photos = [], damageMarkers = [] } = req.body;
   const now = new Date().toISOString();
 
   db.prepare(`
-    UPDATE condition_logs SET date=?, mileage_at_inspection=?, rating=?, inspector=?, notes=?, location=?, updated_at=?
+    UPDATE condition_logs SET date=?, mileage_at_inspection=?, rating=?, inspector=?, notes=?, location=?, damage_markers=?, updated_at=?
     WHERE id=?
-  `).run(date, mileageAtInspection || null, rating, inspector || null, notes || null, location || null, now, req.params.id);
+  `).run(date, mileageAtInspection || null, rating, inspector || null, notes || null, location || null, JSON.stringify(damageMarkers), now, req.params.id);
 
   // Replace photos
   db.prepare('DELETE FROM condition_photos WHERE condition_log_id = ?').run(req.params.id);

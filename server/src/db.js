@@ -80,4 +80,6 @@ db.exec(`
   );
 `);
 
+try { db.exec('ALTER TABLE condition_logs ADD COLUMN damage_markers TEXT'); } catch (_) {}
+
 module.exports = { db, DATA_DIR, UPLOADS_DIR };
