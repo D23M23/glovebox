@@ -23,7 +23,7 @@ function toLog(row, photos) {
       caption: p.caption || '',
       takenAt: p.taken_at,
     })),
-    damageMarkers: row.damage_markers ? JSON.parse(row.damage_markers) : [],
+    damageMarkers: (() => { try { return row.damage_markers ? JSON.parse(row.damage_markers) : []; } catch { return []; } })(),
   };
 }
 
@@ -89,6 +89,11 @@ router.put('/condition-logs/:id', requireAuth, (req, res) => {
 
 // DELETE
 router.delete('/condition-logs/:id', requireAuth, (req, res) => {
+  const log = db.prepare('SELECT created_by FROM condition_logs WHERE id = ?').get(req.params.id);
+  if (!log) return res.status(404).json({ message: 'Not found.' });
+  if (log.created_by !== req.user.id && req.user.role !== 'admin') {
+    return res.status(403).json({ message: 'Only the original author or an admin can delete this entry.' });
+  }
   db.prepare('DELETE FROM condition_logs WHERE id = ?').run(req.params.id);
   res.status(204).end();
 });

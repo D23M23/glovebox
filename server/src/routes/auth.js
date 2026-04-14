@@ -1,12 +1,22 @@
 const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const rateLimit = require('express-rate-limit');
 const { db } = require('../db');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 
 function makeToken(userId) {
-  return jwt.sign({ sub: userId }, process.env.JWT_SECRET, { expiresIn: '7d' });
+  return jwt.sign({ sub: userId }, process.env.JWT_SECRET, { expiresIn: '24h' });
 }
+
+// Limit login/setup to 10 attempts per 15-minute window per IP
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: 'Too many attempts — please wait 15 minutes and try again.' },
+});
 
 // Whether any users exist — drives the first-run setup screen
 router.get('/setup-status', (req, res) => {
@@ -15,7 +25,7 @@ router.get('/setup-status', (req, res) => {
 });
 
 // Create the first admin account (only works when no users exist)
-router.post('/setup', (req, res) => {
+router.post('/setup', authLimiter, (req, res) => {
   const count = db.prepare('SELECT COUNT(*) as c FROM users').get().c;
   if (count > 0) return res.status(400).json({ message: 'Setup already complete' });
 
@@ -37,7 +47,7 @@ router.post('/setup', (req, res) => {
 });
 
 // Login
-router.post('/login', (req, res) => {
+router.post('/login', authLimiter, (req, res) => {
   const { username, password } = req.body;
   const row = db.prepare('SELECT * FROM users WHERE username = ?').get((username || '').toLowerCase());
   if (!row || !bcrypt.compareSync(password, row.password_hash)) {

@@ -61,6 +61,9 @@ router.put('/vehicles/:id', requireAuth, (req, res) => {
 });
 
 router.delete('/vehicles/:id', requireAuth, (req, res) => {
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ message: 'Admin access required to remove vehicles.' });
+  }
   // Soft delete
   db.prepare('UPDATE vehicles SET is_active = 0, updated_at = ? WHERE id = ?')
     .run(new Date().toISOString(), req.params.id);

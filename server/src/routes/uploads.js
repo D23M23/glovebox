@@ -4,10 +4,15 @@ const path = require('path');
 const { UPLOADS_DIR } = require('../db');
 const { requireAuth } = require('../middleware/auth');
 
+const ALLOWED_EXTENSIONS = new Set(['.jpg', '.jpeg', '.png', '.gif', '.webp', '.heic', '.heif']);
+
 const storage = multer.diskStorage({
   destination: UPLOADS_DIR,
   filename(req, file, cb) {
-    const ext = path.extname(file.originalname).toLowerCase() || '.jpg';
+    const ext = path.extname(file.originalname).toLowerCase();
+    if (!ALLOWED_EXTENSIONS.has(ext)) {
+      return cb(new Error('File type not allowed.'));
+    }
     cb(null, `${crypto.randomUUID()}${ext}`);
   },
 });
@@ -17,7 +22,11 @@ const upload = multer({
   limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB max after compression
   fileFilter(req, file, cb) {
     if (!file.mimetype.startsWith('image/')) {
-      return cb(new Error('Only image files are allowed'));
+      return cb(new Error('Only image files are allowed.'));
+    }
+    const ext = path.extname(file.originalname).toLowerCase();
+    if (!ALLOWED_EXTENSIONS.has(ext)) {
+      return cb(new Error('File extension not allowed.'));
     }
     cb(null, true);
   },

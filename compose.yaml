@@ -19,6 +19,9 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       NODE_ENV: production
       DATA_DIR: /app/data
+      # Optional: lock CORS to your deployment URL (e.g. http://10.1.1.253:7070)
+      # Defaults to allowing any origin if unset — set this for tighter security
+      CORS_ORIGIN: ${CORS_ORIGIN:-}
     volumes:
       - glovebox_data:/app/data
     restart: unless-stopped
